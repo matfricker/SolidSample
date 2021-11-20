@@ -12,6 +12,8 @@ namespace ArdalisRating
     public class RatingEngine
     {
         public ConsoleLogger Logger {get; set; } = new ConsoleLogger();
+        public FilePolicySource PolicySource { get; set; } = new FilePolicySource();
+        public JsonPolicySerializer PolicySerializer {get; set; } = new JsonPolicySerializer();
         public decimal Rating { get; set; }
         public void Rate()
         {
@@ -20,10 +22,8 @@ namespace ArdalisRating
             Logger.Log("Loading policy.");
 
             // load policy - open file policy.json
-            string policyJson = File.ReadAllText("policy.json");
-
-            var policy = JsonConvert.DeserializeObject<Policy>(policyJson,
-                new StringEnumConverter());
+            string policyJson = PolicySource.GetPolicySource();
+            var policy = PolicySerializer.GetPolicyFromJsonString(policyJson);
 
             switch (policy.Type)
             {
